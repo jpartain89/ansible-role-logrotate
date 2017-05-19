@@ -2,8 +2,8 @@
 
 {% if item.path is defined %}
 {% for path in item.path %}
-{{ item.path }} 
-{% endfor %}{% endif %} {
+{{ path }}
+{%- endfor %}{% endif %} {
   {% for option in item.options %}
   {{ option }}
   {% endfor %}
@@ -12,6 +12,6 @@
   {{ type }}
     {{ script }}
   endscript
-  {% endfor %}
-  {% endif %}
+{% endfor %}
+{% endif %}
 }
