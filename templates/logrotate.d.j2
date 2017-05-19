@@ -1,0 +1,16 @@
+# {{ ansible_managed }}
+
+{% for path in item.path %}
+{{ item.path }} {
+  {% for option in item.options %}
+  {{ option }}
+  {% endfor %}
+  {% if item.scripts is defined %}
+  {% for type, script in item.scripts.iteritems() %}
+  {{ type }}
+    {{ script }}
+  endscript
+  {% endfor %}
+  {% endif %}
+}
+{% endfor %}

@@ -1,0 +1,16 @@
+---
+
+logrotate_conf_dir: '/etc/logrotate.d'
+
+logrotate_files:
+  - name: apt
+    path: 
+      - '/var/log/apt/term.log'
+      - '/var/log/apt/history.log'
+    options:
+      - 'monthly'
+      - 'rotate 12'
+      - 'compress'
+      - 'missingok'
+      - 'notifempty'
+      - 'create 0644 root syslog'

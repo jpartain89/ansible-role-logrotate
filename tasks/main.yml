@@ -1,0 +1,45 @@
+---
+
+- name: Install Logrotate
+  apt:
+    name: logrotate
+    state: latest
+    update_cache: yes
+  become: true
+  
+- name: Template Logrotate.d Files
+  templates:
+    src: logrotate.d.j2
+    dest: "{{ logrotate_conf_dir }}/{{ item.name }}"
+  with_items: "{{ logrotate_files }}"
+  notify: Run Logrotate
+  
+- name: Create Facts Directory
+  file:
+    path: "/etc/ansible/facts.d"
+    mode: 0775
+    state: directory
+    
+- name: Register Configured Logrotate Files
+  template: 
+    src: "logrotate.fact.j2"
+    dest: "/etc/ansible/facts.d/logrotate.fact"
+    mode: 0644
+  register: logrotate_write_facts
+  
+- name: Reload Logrotate Facts
+  setup:
+    filter: "ansible_local"
+  when: logrotate_write_facts|changed
+  
+- name: List Configured Logrotate Files
+  command: ls -1 {{ logrotate_conf_dir }}
+  register: logrotate_files_present
+  changed_when: false
+  
+- name: Remove Unused Logrotate Files
+  file:
+    path: "{{ logrotate_conf_dir }}/{{ item }}"
+    state: absent
+  with_items: "{{ logrotate_files_present.stdout_lines }}"
+  when: logrotate_file_delete_unlisted and item|basename not in ansible_local.logrotate.logrotate_configured_files
