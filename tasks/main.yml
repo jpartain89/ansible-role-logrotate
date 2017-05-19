@@ -16,7 +16,7 @@
 - name: Create Empty Logrotate.d File for Facts
   file:
     path: "{{ logrotate_conf_dir }}/empty"
-    state: file
+    state: touch
 
 - name: Create Facts Directory
   file:
