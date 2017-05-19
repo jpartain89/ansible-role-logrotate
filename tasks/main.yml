@@ -17,7 +17,8 @@
 - name: Template Emtpy Logrotate File
   template:
     src: logrotate.d.j2
-    dest: "{{ logrotate_conf_dir }}/empty"
+    dest: "{{ logrotate_conf_dir }}/{{ item.name }}"
+  with_items: "{{ logrotate_empty }}"
   changed_when: false
 
 - name: Create Facts Directory
