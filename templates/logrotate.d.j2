@@ -5,9 +5,11 @@
 {{ path }}
 {% endfor %}
 {% endif %} {
+  {% if item.options is defined %}
   {% for option in item.options %}
   {{ option }}
   {% endfor %}
+  {% endif %}
   {% if item.scripts is defined %}
   {% for type, script in item.scripts.iteritems() -%}
   {{ type }}
