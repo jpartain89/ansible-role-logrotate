@@ -9,7 +9,7 @@
   {{ option }}
   {% endfor %}
   {% if item.scripts is defined %}
-  {% for type, script in item.scripts.iteritems() %}
+  {% for type, script in item.scripts.iteritems() -%}
   {{ type }}
     {{ script }}
   endscript
