@@ -1,7 +1,8 @@
 # {{ ansible_managed }}
 
 {% for path in item.path %}
-{{ item.path }} {
+{{ item.path }} 
+{% endfor %} {
   {% for option in item.options %}
   {{ option }}
   {% endfor %}
@@ -13,4 +14,3 @@
   {% endfor %}
   {% endif %}
 }
-{% endfor %}
