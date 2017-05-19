@@ -8,7 +8,7 @@
   become: true
   
 - name: Template Logrotate.d Files
-  templates:
+  template:
     src: logrotate.d.j2
     dest: "{{ logrotate_conf_dir }}/{{ item.name }}"
   with_items: "{{ logrotate_files }}"
