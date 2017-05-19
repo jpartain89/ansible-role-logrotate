@@ -1,4 +1,4 @@
 ---
 
 - name: Run Logrotate
-  command: 'logrotate -f /etc/logrotate.conf -v'
+  command: 'logrotate -f /etc/logrotate.conf'
