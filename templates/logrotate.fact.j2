@@ -3,5 +3,6 @@
 {% for files in logrotate_files %}
     "{{ files.name }}",
 {% endfor %}
+    "empty"
   ]
 }

@@ -12,6 +12,11 @@
     dest: "{{ logrotate_conf_dir }}/{{ item.name }}"
   with_items: "{{ logrotate_files }}"
   notify: Run Logrotate
+  
+- name: Create Empty Logrotate.d File for Facts
+  file:
+    path: "{{ logrotate_conf_dir }}/empty"
+    state: file
 
 - name: Create Facts Directory
   file:
