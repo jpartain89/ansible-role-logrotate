@@ -1,0 +1,23 @@
+language: c
+sudo: required
+matrix:
+  include:
+  - os: linux
+    dist: trusty
+
+before_install:
+- sudo apt-get update -qq
+- sudo apt-get install -qqy python-apt python
+install:
+- sudo -H pip install --upgrade ansible
+- "{ echo '[defaults]'; echo 'roles_path = ../'; } >> ansible.cfg"
+script:
+- ansible-playbook -i tests/inventory tests/test.yml --syntax-check
+- ansible-playbook -i tests/inventory tests/test.yml --connection=local -vvv
+- 'ansible-playbook -i tests/inventory tests/test.yml --connection=local | grep -q
+  ''changed=0.*failed=0'' && (echo ''Idempotence test: pass'' && exit 0) || (echo
+  ''Idempotence test: fail'' && exit 1)'
+notifications:
+  webhooks: https://galaxy.ansible.com/api/v1/notifications/
+  slack:
+    secure: lmt/5AUc3u1q8+HRNm6YKPUXbAPP2wubGU05CpA8kZqm0KiAGAZK94jGTNTiPWxcrgkYYBsUVg6EwKjQFJT+MLcOrpDXwmV31TZuEC4ZL4Vis9vFPZBoT8a6YJw+qvUrks3fVmPoh6oQYfJanBA3dZoPpJViwwxMpSQ/hCNLxL4aHzY0xE4KOUpU5ujwfitBZ+WkOR2kslsDz+Q/s7EBcXFAVeAH53k0+e4iRJ11sWPORXETNwhvA59pvUNtAazdI4WAdcGkyvTXfcP3pcJ29h+oaQmfm60feYz5BjWwmKlsjyvMqgbHJwPhwRxlpWDIf6t6Zn0dUFjK+96U3OxYtZZAkNiK40LeMyojDB7CXDYa39DXCZoOXdxl7/8nmRjmoAGkP5I6UtP92ujjiPiE3Bs4IHPEmMcsLcPYaTJVhYBJplKb8zaCklVIlmaH+2aOsjL7SClNKj0TcPual6Tl3cmrwowIl62g5+5K1j0+m8VQsEa9KJ3ZlI2BQVKt+bt51K5yjopt/FKlVyHueHnNA05f147q+/Xz97th1ShzW+mSfbVaD92LadrbkgpizV3RKfgP1HbI7IYdHtSm2pTCZqmsApsmoKAbfMkzYHggQrE6LHsftY0MCudmhTRCXiduz/PAX044qu7J+wgmrswpbkmiuWNr55Qt3DnJzw6UWuN0=
