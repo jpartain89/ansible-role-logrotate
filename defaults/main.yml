@@ -1,6 +1,7 @@
 ---
 
 logrotate_conf_dir: '/etc/logrotate.d'
+logrotate_files_delete_unlisted: True
 
 logrotate_files:
   - name: apt
