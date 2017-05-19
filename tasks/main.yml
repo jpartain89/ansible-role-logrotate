@@ -5,6 +5,7 @@
     name: logrotate
     state: latest
     update_cache: yes
+    cache_valid_time: 86400
 
 - name: Template Logrotate.d Files
   template:
