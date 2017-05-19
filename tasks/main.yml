@@ -14,10 +14,11 @@
   with_items: "{{ logrotate_files }}"
   notify: Run Logrotate
   
-- name: Create Empty Logrotate.d File for Facts
-  file:
-    path: "{{ logrotate_conf_dir }}/empty"
-    state: touch
+- name: Template Emtpy Logrotate File
+  template:
+    src: logrotate.d.j2
+    dest: "{{ logrotate_conf_dir }}/empty"
+  changed_when: false
 
 - name: Create Facts Directory
   file:
