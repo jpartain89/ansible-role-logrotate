@@ -5,13 +5,17 @@
 {{ path }}
 {% endfor %}
 {% endif %} {
-  {% if item.options is defined %}
-  {% for option in item.options %}
+{% if item.options is defined %}
+{% for option in item.options %}
   {{ option }}
-  {% endfor %}
-  {% endif %}
-  {% if item.scripts is defined %}
-  {% for type, script in item.scripts.iteritems() -%}
+{% endfor %}
+{% endif %}
+{% if item.olddir is defined %}
+  olddir {{ item.olddir }}
+  createolddir
+{% endif %}
+{% if item.scripts is defined %}
+{% for type, script in item.scripts.iteritems() %}
   {{ type }}
     {{ script }}
   endscript

@@ -1,11 +1,18 @@
 ---
 
-- name: Install Logrotate
+- name: Install Logrotate | apt
   apt:
     name: logrotate
     state: latest
     update_cache: yes
     cache_valid_time: 86400
+  when: ansible_pkg_mgr == 'apt'
+
+- name: Install Logrotate | dnf
+  dnf:
+    name: logrotate
+    state: latest
+  when: ansible_pkg_mgr == 'dnf'
 
 - name: Template Logrotate.d Files
   template:
@@ -13,7 +20,7 @@
     dest: "{{ logrotate_conf_dir }}/{{ item.name }}"
   with_items: "{{ logrotate_files }}"
   notify: Run Logrotate
-  
+
 - name: Template Emtpy Logrotate File
   template:
     src: logrotate.d.j2
