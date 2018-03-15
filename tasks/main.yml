@@ -57,11 +57,11 @@
     src: "{{ logrotate_conf_dir }}/{{ item }}"
     dest: "{{ logrotate_conf_dir }}/{{ item }}.old"
   with_items: "{{ logrotate_files_present.stdout_lines }}"
-  when: logrotate_files_delete_unlisted and item|basename not in ansible_local.logrotate.logrotate_configured_files
+  when: logrotate_files_delete_unlisted|bool and item|basename not in ansible_local.logrotate.logrotate_configured_files
 
 - name: Remove Unused Logrotate Files
   file:
     path: "{{ logrotate_conf_dir }}/{{ item }}"
     state: absent
   with_items: "{{ logrotate_files_present.stdout_lines }}"
-  when: logrotate_files_delete_unlisted and item|basename not in ansible_local.logrotate.logrotate_configured_files
+  when: logrotate_files_delete_unlisted|bool and item|basename not in ansible_local.logrotate.logrotate_configured_files
