@@ -21,39 +21,48 @@
   with_items: "{{ logrotate_files }}"
   notify: Run Logrotate
 
-- name: Template Emtpy Logrotate File
-  template:
-    src: logrotate.d.j2
-    dest: "{{ logrotate_conf_dir }}/{{ item.name }}"
-  with_items: "{{ logrotate_empty }}"
-  changed_when: false
-
-- name: Create Facts Directory
-  file:
-    path: "/etc/ansible/facts.d"
-    mode: 0775
-    state: directory
-
-- name: Register Configured Logrotate Files
-  template:
-    src: "logrotate.fact.j2"
-    dest: "/etc/ansible/facts.d/logrotate.fact"
-    mode: 0644
-  register: logrotate_write_facts
-
-- name: Reload Ansible Facts
-  setup:
-    filter: "ansible_local"
-  when: logrotate_write_facts.changed
-
-- name: List Configured Logrotate Files
-  command: ls -1 {{ logrotate_conf_dir }}
-  register: logrotate_files_present
-  changed_when: false
-
-- name: Remove Unused Logrotate Files
-  file:
-    path: "{{ logrotate_conf_dir }}/{{ item }}"
-    state: absent
-  with_items: "{{ logrotate_files_present.stdout_lines }}"
-  when: logrotate_files_delete_unlisted and item|basename not in ansible_local.logrotate.logrotate_configured_files
+#- name: Template Emtpy Logrotate File
+#  template:
+#    src: logrotate.d.j2
+#    dest: "{{ logrotate_conf_dir }}/{{ item.name }}"
+#  with_items: "{{ logrotate_empty }}"
+#  changed_when: false
+#
+#- name: Create Facts Directory
+#  file:
+#    path: "/etc/ansible/facts.d"
+#    mode: 0775
+#    state: directory
+#
+#- name: Register Configured Logrotate Files
+#  template:
+#    src: "logrotate.fact.j2"
+#    dest: "/etc/ansible/facts.d/logrotate.fact"
+#    mode: 0644
+#  register: logrotate_write_facts
+#
+#- name: Reload Ansible Facts
+#  setup:
+#    filter: "ansible_local"
+#  when: logrotate_write_facts.changed
+#
+#- name: List Configured Logrotate Files
+#  command: ls -1 {{ logrotate_conf_dir }}
+#  register: logrotate_files_present
+#  changed_when: false
+#
+#- name: Move old/existing Files
+#  copy:
+#    remote_src: yes
+#    src: "{{ logrotate_conf_dir }}/{{ item }}"
+#    dest: "{{ logrotate_conf_dir }}/{{ item }}.old"
+#  with_items: "{{ logrotate_files_present.stdout_lines }}"
+#  when: logrotate_files_present.stdout_lines not in #ansible_local.logrotate.logrotate_configured_files
+#
+#- name: Remove Unused Logrotate Files
+#  file:
+#    path: "{{ logrotate_conf_dir }}/{{ item }}"
+#    state: absent
+#  with_items: "{{ logrotate_files_present.stdout_lines }}"
+#  when: logrotate_files_present.stdout_lines not in #ansible_local.logrotate.logrotate_configured_files
+#
