@@ -1,6 +1,6 @@
 # jpartain89.Logrotate
 
-| ** Travis-CI ** |
+| **Travis-CI** |
 | -------------- |
 | [![Build Status](https://travis-ci.org/jpartain89/ansible-role-logrotate.svg?branch=master)](https://travis-ci.org/jpartain89/ansible-role-logrotate) |
 
