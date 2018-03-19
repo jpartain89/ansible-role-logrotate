@@ -14,6 +14,15 @@
     state: latest
   when: ansible_pkg_mgr == 'dnf'
 
+- name: Write Parent logrotate.d Files
+  template:
+    src: logrotate.d.j2
+    dest: "{{ logrotate_conf_dir }}/{{ item.name }}"
+  with_items:
+    - "{{ parent_logrotate_files }}"
+  when: parent_logrotate_files is defined
+  notify: Run Logrotate
+
 - name: Template Logrotate.d Files
   template:
     src: logrotate.d.j2
