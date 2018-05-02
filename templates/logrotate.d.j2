@@ -15,6 +15,7 @@
   createolddir
 {% endif %}
 {% if item.scripts is defined %}
+  sharedscripts
 {% for type, script in item.scripts.items() %}
   {{ type }}
     {{ script }}
