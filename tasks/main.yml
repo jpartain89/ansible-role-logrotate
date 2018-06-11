@@ -18,6 +18,7 @@
   template:
     src: logrotate.d.j2
     dest: "{{ logrotate_conf_dir }}/{{ item.name }}"
+    backup: yes
   with_items:
     - "{{ parent_logrotate_files }}"
   when: parent_logrotate_files is defined
@@ -27,6 +28,7 @@
   template:
     src: logrotate.d.j2
     dest: "{{ logrotate_conf_dir }}/{{ item.name }}"
+    backup: yes
   with_items: "{{ logrotate_files }}"
   notify: Run Logrotate
 
