@@ -16,4 +16,5 @@ logrotate_files:
       - 'notifempty'
       - 'create 0644 root syslog'
 
-logrotate.removed: no
+logrotate_removed: false
+logrotate_backup_dir: /etc/logrotate.old/
