@@ -54,20 +54,25 @@
   register: logrotate_files_present
   changed_when: false
 
-  - name: Move old/existing Files
+- name: Create Logrotate Backup Dir
+  file:
+    path: "{{ logrotate_backup_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0775
+
+- name: Move old/existing Files
   copy:
     remote_src: yes
     src: "{{ logrotate_conf_dir }}/{{ item }}"
-    dest: "{{ logrotate_conf_dir }}/{{ item }}.old"
+    dest: "{{ logrotate_backup_dir }}/{{ item }}.old"
   with_items: "{{ logrotate_files_present.stdout_lines }}"
-  when: item|basename not in ansible_local.logrotate.logrotate_configured_files and
-      logrotate.removed == no
-
+  when: item|basename not in ansible_local.logrotate.logrotate_configured_files
 
 - name: Remove Unused Logrotate Files
   file:
     path: "{{ logrotate_conf_dir }}/{{ item }}"
     state: absent
   with_items: "{{ logrotate_files_present.stdout_lines }}"
-  when: item|basename not in ansible_local.logrotate.logrotate_configured_files and
-      logrotate.removed == yes
+  when: item|basename not in ansible_local.logrotate.logrotate_configured_files
