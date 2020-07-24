@@ -15,3 +15,5 @@ logrotate_files:
       - 'missingok'
       - 'notifempty'
       - 'create 0644 root syslog'
+
+logrotate.removed: no

@@ -1,9 +1,15 @@
 {
   "logrotate_configured_files": [
-{% for files in logrotate_files %}
+  {% if logrotate_files is defined %}
+  {% for files in logrotate_files %}
     "{{ files.name }}",
-    "{{ files.name }}.old"
-{% endfor %}
-    "empty"
+  {% endfor %}
+  {% endif %}
+  {% if parent_logrotate_files is defined %}
+  {% for files in parent_logrotate_files %}
+    "{{ files.name }}",
+  {% endfor %}
+  {% endif %}
+  "empty"
   ]
 }
