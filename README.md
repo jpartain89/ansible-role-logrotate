@@ -13,7 +13,7 @@ Installs Logrotate on Debian-Based systems and creates/configures the logrotate 
 You'll want to build a dictionary for each logrotate config file.
 ``logrotate_files`` is the top level of the dictionary.
 
-** You can now add on the use of ``parent_logrotate_files`` as a means of centralizing your most-used logrotate configs. As in ones that ALL of your hosts use across the board **
+**You can now add on the use of ``parent_logrotate_files`` as a means of centralizing your most-used logrotate configs. As in ones that ALL of your hosts use across the board**
 
   ``name`` is the name of the config file
   ``path`` is the specific log files path
