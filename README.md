@@ -55,6 +55,7 @@ logrotate_files:
 
 ## Example Playbook
 
+```
 - hosts: servers
 
   vars:
@@ -77,6 +78,8 @@ logrotate_files:
 
   roles:
     - jpartain89.logrotate
+
+```
 
 ## License
 
