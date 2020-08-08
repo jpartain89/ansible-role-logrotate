@@ -5,6 +5,7 @@ name: CI
   push:
     branches:
       - master
+      - develop
 
 jobs:
 
