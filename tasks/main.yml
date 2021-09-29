@@ -14,6 +14,18 @@
     state: present
   when: ansible_pkg_mgr == 'dnf'
 
+- name: Create "old" Parent Directories
+  file:
+    path: "/var/log/{{ item.name.extra_options.olddir }}"
+    owner: "{{ item.name.extra_options.create.user }}"
+    group: "{{ item.name.extra_options.create.group }}"
+    mode: "{{ item.name.extra_options.create.mode }}"
+    state: directory
+  with_items:
+    - "{{ parent_logrotate_files }}"
+  when:
+    - parent_logrotate_files.extra_options.olddir is defined
+
 - name: Write Parent logrotate.d Files
   template:
     mode: 0644
