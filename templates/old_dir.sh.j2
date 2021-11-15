@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+{% for items in parent_logrotate_files %}
+{% if items.extra_options.olddir is defined %}
+mkdir -p /var/log/{{ items.extra_options.olddir }}
+chown {{ items.extra_options.create.user }}:{{ items.extra_options.create.group }} /var/log/{{ items.extra_options.olddir }}
+{% endif %}
+{% endfor %}
+{% for items in logrotate_files %}
+{% if items.extra_options.olddir is defined %}
+mkdir -p /var/log/{{ items.extra_options.olddir }}
+chown {{ items.extra_options.create.user }}:{{ items.extra_options.create.group }} /var/log/{{ items.extra_options.olddir }}
+{% endif %}
+{% endfor %}
