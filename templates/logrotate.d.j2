@@ -10,12 +10,6 @@
   {{ option }}
 {% endfor %}
 {% endif %}
-{% if item.extra_options.olddir is defined %}
-  olddir {{ item.extra_options.olddir }}
-{% endif %}
-{% if item.extra_options.create is defined %}
-  create {{ item.extra_options.create.mode }} {{ item.extra_options.create.user }} {{ item.extra_options.create.group }}
-{% endif %}
 {% if item.olddir is defined %}
   olddir {{ item.olddir }}
   createolddir

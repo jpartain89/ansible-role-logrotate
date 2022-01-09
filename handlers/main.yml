@@ -2,7 +2,3 @@
 
 - name: Run Logrotate
   command: 'logrotate -f /etc/logrotate.conf'
-
-- name: Reload Ansible Facts
-  setup:
-    filter: "ansible_local"
