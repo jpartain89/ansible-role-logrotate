@@ -14,16 +14,16 @@
     state: latest
   when: ansible_pkg_mgr == 'dnf'
 
-<<<<<<< Updated upstream
 - name: Create Old Directories
   file:
-    path: "/var/log/{{ item }}"
+    path: "/var/log/{{ item.0.olddir }}"
     state: directory
-    owner: "{{ item.user }}"
-    group: "{{ item.group }}"
-    mode: "{{ item.mode }}"
-  with_items:
-    - "{{ parent_extra_options.name }}"
+    owner: "{{ item.1.user }}"
+    group: "{{ item.1.group }}"
+    mode: "{{ item.1.mode }}"
+  iterate:
+    - "{{ logrotate_files.extra_options }}"
+    - "{{ logrotate_files.extra_options.create }}"
 
 #- name: Create Bash Script to Create Old Directories
 #  template:
@@ -41,8 +41,6 @@
 #  with_items:
 #    - "{{ inventory_hostname }}"
 
-=======
->>>>>>> Stashed changes
 - name: Write Parent logrotate.d Files
   template:
     src: logrotate.d.j2
@@ -93,7 +91,7 @@
 
 - name: Move old/existing Files
   copy:
-    remote_src: yes
+    remote_src: true
     src: "{{ logrotate_conf_dir }}/{{ item }}"
     dest: "{{ logrotate_backup_dir }}/{{ item }}.old"
   with_items: "{{ logrotate_files_present.stdout_lines }}"
