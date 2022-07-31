@@ -16,14 +16,14 @@
 
 - name: Create Old Directories
   file:
-    path: "/var/log/{{ item.olddir }}"
+    path: "/var/log/{{ item.extra_options.olddir|default([]) }}"
     state: directory
-    owner: "{{ item.user }}"
-    group: "{{ item.group }}"
-    mode: "{{ item.mode }}"
+    owner: "{{ item.extra_options.user|default([]) }}"
+    group: "{{ item.extra_options.group|default([]) }}"
+    mode: "{{ item.extra_options.mode|default([]) }}"
   with_items:
     - "{{ logrotate_files }}"
-  when: logrotate_files.olddir is defined
+  failed_when: false
 
 #- name: Create Bash Script to Create Old Directories
 #  template:
