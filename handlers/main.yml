@@ -1,4 +1,5 @@
 ---
 
-- name: Run Logrotate
-  command: 'logrotate -f /etc/logrotate.conf'
+- name: Logrotate | handlers main.yml | Run Logrotate
+  ansible.builtin.command: 'logrotate -f /etc/logrotate.conf'
+  become: true
