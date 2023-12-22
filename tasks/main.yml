@@ -26,7 +26,7 @@
   failed_when: false
 
 - name: Logrotate | main.yml | Write Parent logrotate.d Files
-  ansible.builtin.template:
+ ansible.builtin.template:
     src: logrotate.d.j2
     dest: "{{ logrotate_conf_dir }}/{{ item.name }}"
     mode: '0750'
