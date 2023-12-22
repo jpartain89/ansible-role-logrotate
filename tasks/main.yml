@@ -7,14 +7,14 @@
     update_cache: true
     cache_valid_time: 86400
   when: ansible_pkg_mgr == 'apt'
-
-- name: Install Logrotate
+ 
+- name: logrotate | main.yml | Install Logrotate, dnf
   ansible.builtin.dnf:
     name: logrotate
     state: latest
   when: ansible_pkg_mgr == 'dnf'
 
-- name: Create Old Directories
+- name: logrotate | main.yml | Create Old Directories
   ansible.builtin.file:
     path: "/var/log/{{ item.extra_options.olddir | default([]) }}"
     state: directory
@@ -25,23 +25,7 @@
     - "{{ logrotate_files }}"
   failed_when: false
 
-#- name: Create Bash Script to Create Old Directories
-#  template:
-#    src: old_dir.sh.j2
-#    dest: "/tmp/{{ item }}.sh"
-#    mode: 0775
-#  delegate_to: localhost
-#  delegate_facts: true
-#  with_items:
-#    - "{{ inventory_hostname }}"
-#
-#- name: Run Created Bash Scripts
-#  script: "/tmp/{{ item }}.sh"
-#  become: true
-#  with_items:
-#    - "{{ inventory_hostname }}"
-
-- name: Write Parent logrotate.d Files
+- name: logrotate | main.yml | Write Parent logrotate.d Files
   ansible.builtin.template:
     src: logrotate.d.j2
     dest: "{{ logrotate_conf_dir }}/{{ item.name }}"
@@ -51,7 +35,7 @@
   when: parent_logrotate_files is defined
   notify: Run Logrotate
 
-- name: Write Logrotate.d Files
+- name: logrotate | main.yml | Write Logrotate.d Files
   ansible.builtin.template:
     src: logrotate.d.j2
     dest: "{{ logrotate_conf_dir }}/{{ item.name }}"
@@ -60,30 +44,30 @@
   with_items: "{{ logrotate_files }}"
   notify: Run Logrotate
 
-- name: Create Facts Directory
+- name: logrotate | main.yml | Create Facts Directory
   ansible.builtin.file:
     path: "/etc/ansible/facts.d"
     mode: '0775'
     state: directory
 
-- name: Register Configured Logrotate Files
+- name: logrotate | main.yml | Register Configured Logrotate Files
   ansible.builtin.template:
     src: "logrotate.fact.j2"
     dest: "/etc/ansible/facts.d/logrotate.fact"
     mode: '0644'
   register: logrotate_write_facts
 
-- name: Reload Ansible Facts
+- name: logrotate | main.yml | Reload Ansible Facts
   ansible.builtin.setup:
     filter: "ansible_local"
   when: logrotate_write_facts.changed
 
-- name: List Configured Logrotate Files
+- name: logrotate | main.yml | List Configured Logrotate Files
   ansible.builtin.command: ls -1 {{ logrotate_conf_dir }}
   register: logrotate_files_present
   changed_when: false
 
-- name: Create Logrotate Backup Dir
+- name: logrotate | main.yml | Create Logrotate Backup Dir
   ansible.builtin.file:
     path: "{{ logrotate_backup_dir }}"
     state: directory
@@ -91,7 +75,7 @@
     group: root
     mode: '0775'
 
-- name: Move old/existing Files
+- name: logrotate | main.yml | Move old/existing Files
   ansible.builtin.copy:
     remote_src: true
     src: "{{ logrotate_conf_dir }}/{{ item }}"
@@ -99,7 +83,7 @@
   with_items: "{{ logrotate_files_present.stdout_lines }}"
   when: item|basename not in ansible_local.logrotate.logrotate_configured_files
 
-- name: Remove Unused Logrotate Files
+- name: logrotate | main.yml | Remove Unused Logrotate Files
   ansible.builtin.file:
     path: "{{ logrotate_conf_dir }}/{{ item }}"
     state: absent
