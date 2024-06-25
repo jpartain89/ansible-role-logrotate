@@ -1,5 +1,42 @@
 ---
 
-- name: Logrotate | handlers main.yml | Run Logrotate
-  ansible.builtin.command: 'logrotate -f /etc/logrotate.conf'
+- name: Restart sshd
+  ansible.builtin.service:
+    name: ssh
+    state: restarted
+    enabled: true
+  when: not reboot_required.stat.exists
+
+- name: Restart SSHD
+  ansible.builtin.service:
+    name: ssh
+    state: restarted
+    enabled: true
+  when: not reboot_required.stat.exists
+
+- name: Restart Networking.service
+  ansible.builtin.service:
+    name: networking
+    state: reloaded
+    enabled: true
+
+- name: Restart systemd_network
+  ansible.builtin.systemd:
+    name: systemd-networked
+    state: reloaded
+
+- name: Install iTerm Script
+  ansible.builtin.script: |
+    "{{ tmp_scripts.iterm.dest }} && \
+      rm {{ tmp_scripts.iterm.dest }}"
+
+- name: Update Apt Package Cache
+  ansible.builtin.apt:
+    update_cache: true
   become: true
+
+- name: Restart fail2ban
+  ansible.builtin.service:
+    name: fail2ban
+    state: restarted
+  when: not reboot_required.stat.exists

@@ -1,92 +1,50 @@
 ---
 
-- name: Logrotate | main.yml | apt | Install Logrotate
-  ansible.builtin.apt:
-    name: logrotate
-    state: latest
-    update_cache: true
-    cache_valid_time: 86400
-  when: ansible_pkg_mgr == 'apt'
+- name: First-steps_linux | main.yml | Install Python
+  ansible.builtin.raw: test -e /usr/bin/python && echo "Exists" || (apt -y update && apt install -y python3)
+  register: python_raw
+  become: true
+  changed_when: "'Exists' not in python_raw.stdout"
+  tags: production
 
-- name: Logrotate | main.yml | dnf | Install Logrotate
-  ansible.builtin.dnf:
-    name: logrotate
-    state: latest
-  when: ansible_pkg_mgr == 'dnf'
+- name: First-steps_linux | Main.yml | Include Variables
+  ansible.builtin.include_vars: "{{ item }}"
+  with_first_found:
+    - "../vars/{{ ansible_architecture }}.yml"
+    - "../vars/{{ ansible_os_family }}.yml"
+    - "../vars/default.yml"
+  tags: production
 
-- name: Logrotate | main.yml | Create Old Directories
-  ansible.builtin.file:
-    path: "/var/log/{{ item.extra_options.olddir | default([]) }}"
-    state: directory
-    owner: "{{ item.extra_options.user | default([]) }}"
-    group: "{{ item.extra_options.group | default([]) }}"
-    mode: "{{ item.extra_options.mode | default([]) }}"
-  with_items:
-    - "{{ logrotate_files }}"
-  failed_when: false
+- name: First-steps_linux | Main.yml | Ensure SSH Key is authorized
+  ansible.posix.authorized_key:
+    user: "{{ ansible_user_id }}"
+    state: present
+    key: "{{ first_steps_git_ssh.key }}"
+  tags: production
 
-- name: Logrotate | main.yml | Write Parent logrotate.d Files
- ansible.builtin.template:
-    src: logrotate.d.j2
-    dest: "{{ logrotate_conf_dir }}/{{ item.name }}"
-    mode: '0750'
-  with_items:
-    - "{{ parent_logrotate_files }}"
-  when: parent_logrotate_files is defined
-  notify: Run Logrotate
+- name: First-steps_linux | Main.yml | Import Task debian.yml
+  ansible.builtin.import_tasks: debian.yml
+  when: ansible_os_family == "Debian"
+  become: true
+  tags: production
 
-- name: Logrotate | main.yml | Write Logrotate.d Files
-  ansible.builtin.template:
-    src: logrotate.d.j2
-    dest: "{{ logrotate_conf_dir }}/{{ item.name }}"
-    backup: true
-    mode: '0750'
-  with_items: "{{ logrotate_files }}"
-  notify: Run Logrotate
+- name: First-steps_linux | Main.yml | Run various scripts downloaded from the internet
+  ansible.builtin.import_tasks: download_scripts_install.yml
+  when: ansible_os_family == "Debian"
+  become: true
+  tags: production
 
-- name: Logrotate | main.yml | Create Facts Directory
-  ansible.builtin.file:
-    path: "/etc/ansible/facts.d"
-    mode: '0775'
-    state: directory
+- name: First-steps_linux | Main.yml | Run mount.yml
+  ansible.builtin.import_tasks: mount.yml
+  tags: production
 
-- name: Logrotate | main.yml | Register Configured Logrotate Files
-  ansible.builtin.template:
-    src: "logrotate.fact.j2"
-    dest: "/etc/ansible/facts.d/logrotate.fact"
-    mode: '0644'
-  register: logrotate_write_facts
-
-- name: Logrotate | main.yml | Reload Ansible Facts
-  ansible.builtin.setup: # noqa: no-handler
-    filter: "ansible_local"
-  when: logrotate_write_facts.changed
-
-- name: Logrotate | main.yml | List Configured Logrotate Files
-  ansible.builtin.command: ls -1 {{ logrotate_conf_dir }}
-  register: logrotate_files_present
-  changed_when: false
-
-- name: Logrotate | main.yml | Create Logrotate Backup Dir
-  ansible.builtin.file:
-    path: "{{ logrotate_backup_dir }}"
-    state: directory
-    owner: root
-    group: root
-    mode: '0775'
-
-- name: Logrotate | main.yml | Move old/existing Files
-  ansible.builtin.copy:
-    remote_src: true
-    src: "{{ logrotate_conf_dir }}/{{ item }}"
-    dest: "{{ logrotate_backup_dir }}/{{ item }}.old"
-    mode: '0750'
-  with_items: "{{ logrotate_files_present.stdout_lines }}"
-  when: item|basename not in ansible_local.logrotate.logrotate_configured_files
-
-- name: Logrotate | main.yml | Remove Unused Logrotate Files
-  ansible.builtin.file:
-    path: "{{ logrotate_conf_dir }}/{{ item }}"
-    state: absent
-  with_items: "{{ logrotate_files_present.stdout_lines }}"
-  when: item|basename not in ansible_local.logrotate.logrotate_configured_files
+# - name: First-steps_linux | Main.yml | Install Docker
+#  ansible.builtin.import_tasks: install-docker.yml
+#  when: ansible_facts['ansible_distribution'] != 'Raspbian' or
+#    ansible_facts['ansible_lsb.id'] != 'Raspbian'
+#  tags: docker
+#
+- name: First-steps_linux | Main.yml | Run it87 Commands on JPServer
+  ansible.builtin.import_tasks: it87.yml
+  when: ansible_hostname == "JPserver"
+  become: true

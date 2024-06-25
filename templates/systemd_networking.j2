@@ -1,0 +1,9 @@
+{% set net_items = first_steps.network -%}
+# {{ ansible_managed }}
+[Match]
+Name={{ net_items.eth_main.match }}
+
+[Network]
+Address={{ net_items.eth_main.ip }}/24
+Gateway={{ net_items.eth_main.gateway }}
+DNS={{ net_items.eth_main.dns_nameservers }}

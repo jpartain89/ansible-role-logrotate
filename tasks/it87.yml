@@ -1,0 +1,10 @@
+---
+
+- name: Linux | it87.yml | Clone the git repo for it87
+  ansible.builtin.git:
+    repo: https://github.com/a1wong/it87.git
+    dest: "{{ ansible_env.HOME }}/git/it87"
+    update: true
+    accept_hostkey: true
+    recursive: true
+  when: ansible_os_family == "Ubuntu"

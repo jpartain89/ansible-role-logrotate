@@ -1,0 +1,52 @@
+---
+
+- name: First-steps_linux | install-docker.yml | Install PreRequisites
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  loop:
+    - ca-certificates
+    - curl
+    - gnupg
+    - lsb-release
+  become: true
+
+- name: First-steps_linux | install-docker.yml | Download Docker GPG Key
+  ansible.builtin.get_url:
+    url: "https://download.docker.com/linux/ubuntu/gpg"
+    dest: "{{ docker_gpg_key }}"
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+
+- name: First-steps_linux | install-docker.yml | Create Docker Apt Repo
+  ansible.builtin.apt_repository:
+    repo: "deb [arch={{ docker_arch }} signed-by={{ docker_gpg_key }}] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    state: present
+    update_cache: true
+  become: true
+
+- name: First-steps_linux | install-docker.yml | Install Docker
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  loop: "{{ new_docker_apps }}"
+  become: true
+
+- name: First-steps_linux | install-docker.yml | Add Docker group
+  ansible.builtin.group:
+    name: docker
+    state: present
+    system: true
+  become: true
+
+- name: First-steps_linux | install-docker.yml | Add user to docker group
+  ansible.builtin.user:
+    name: "{{ ansible_user_id }}"
+    groups: docker
+    append: true
+    state: present
+  become: true

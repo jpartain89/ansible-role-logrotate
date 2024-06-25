@@ -1,0 +1,57 @@
+---
+
+- name: First-steps_linux | mount.yml | Install the Required Programs
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  become: true
+  loop:
+    - cifs-utils
+    - nfs-common
+    - nfs-kernel-server
+    - nfs4-acl-tools
+    - rpcbind
+
+- name: First-steps_linux | mount.yml | Create mountable directories
+  ansible.builtin.file:
+    path: "{{ item.target }}"
+    state: directory
+    owner: jpartain89
+    group: jpartain89
+    mode: '0777'
+  with_items:
+    - "{{ cifs_fstab }}"
+    - "{{ nfs_fstab }}"
+  become: true
+  failed_when: false
+
+- name: First-steps_linux | mount.yml | Combine cifs_opts
+  ansible.builtin.set_fact:
+    _cifs_opts: "{{ cifs_opts | join(',') }}"
+
+- name: First-steps_linux | mount.yml | Add Networked Mount Points
+  ansible.posix.mount:
+    src: "{{ item.source }}"
+    path: "{{ item.target }}"
+    fstype: "cifs"
+    state: present
+    opts: "{{ _cifs_opts }}"
+  with_items:
+    - "{{ cifs_fstab }}"
+  become: true
+
+- name: First-steps_linux | mount.yml | Combine nfs_opts
+  ansible.builtin.set_fact:
+    _nfs_opts: "{{ nfs_opts | join(',') }}"
+
+- name: First-steps_linux | mount.yml | Add Networked Mount Points
+  ansible.posix.mount:
+    src: "{{ item.source }}"
+    path: "{{ item.target }}"
+    fstype: "nfs"
+    state: present
+    opts: "{{ _nfs_opts }}"
+  with_items:
+    - "{{ nfs_fstab }}"
+  become: true

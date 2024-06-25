@@ -1,0 +1,52 @@
+# {{ ansible_managed }}
+Port {{ ssh_port }}
+Protocol 2
+
+HostKey /etc/ssh/ssh_host_rsa_key
+HostKey /etc/ssh/ssh_host_dsa_key
+HostKey /etc/ssh/ssh_host_ecdsa_key
+HostKey /etc/ssh/ssh_host_ed25519_key
+UsePrivilegeSeparation yes
+
+# Logging
+SyslogFacility AUTH
+LogLevel INFO
+
+# Authentication:
+LoginGraceTime 2m
+PermitRootLogin no
+StrictModes yes
+PubkeyAuthentication yes
+AuthorizedKeysFile	%h/.ssh/authorized_keys
+
+IgnoreRhosts yes
+HostbasedAuthentication no
+
+PermitEmptyPasswords no
+ChallengeResponseAuthentication yes
+PasswordAuthentication yes
+
+# GSSAPI options
+GSSAPIAuthentication yes
+GSSAPICleanupCredentials no
+
+X11Forwarding yes
+PrintMotd yes
+PrintLastLog no
+TCPKeepAlive yes
+
+MaxStartups 10:30:60
+AcceptEnv LANG LC_*
+Subsystem sftp /usr/lib/openssh/sftp-server
+UsePAM yes
+
+AllowAgentForwarding yes
+AllowTcpForwarding yes
+GatewayPorts yes
+Pidfile /var/run/sshd.pid
+
+PermitTunnel yes
+PermitTTY yes
+IgnoreUserKnownHosts no
+RSAAuthentication no
+KeepAlive yes

@@ -1,0 +1,4 @@
+---
+# raspberry pi's vars file
+
+docker_arch: arm64

@@ -1,0 +1,41 @@
+{% set net_items = first_steps.network -%}
+# {{ ansible_managed }}
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+# The loopback network interface
+auto {{ net_items.loopback.devices }}
+iface {{ net_items.loopback.devices }} inet loopback
+
+{% if net_items.eth_main.device is defined %}
+# The Wired Network Interface
+auto {{ net_items.eth_main.device }}
+iface {{ net_items.eth_main.device }} inet {{ net_items.eth_main.iface_inet }}
+{% if net_items.eth_main.iface_inet == 'static' %}
+    address {{ net_items.eth_main.ip }}
+    netmask {{ net_items.eth_main.netmask }}
+    gateway {{ net_items.eth_main.gateway }}
+    broadcast {{ net_items.eth_main.broadcast }}
+    network {{ net_items.eth_main.network }}
+    dns-nameservers {{ net_items.eth_main.dns_nameservers }}
+{% endif %}
+    {% if net_items.eth_main.post_up is defined %}
+    {{ net_items.eth_main.post_up }}
+    {% endif %}
+{% endif %}
+
+# This is an autoconfigured IPv6 interface
+iface eth0 inet6 auto
+
+{% if net_items.wireless is defined %}
+allow-hotplug {{ net_items.wireless.device }}
+iface {{ net_items.wireless.device }} inet manual
+wpa-roam /etc/wpa_supplicant/wpa_supplicant.conf
+iface default inet static
+    address {{ net_items.wireless.ip }}
+    netmask {{ net_items.wireless.netmask }}
+    gateway {{ net_items.wireless.gateway }}
+    broadcast {{ net_items.wireless.broadcast }}
+    network {{ net_items.wireless.network }}
+    dns-nameservers {{ net_items.wireless.dns_nameservers }}
+{% endif %}

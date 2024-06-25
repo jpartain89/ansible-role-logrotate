@@ -1,20 +1,108 @@
 ---
 
-logrotate_conf_dir: '/etc/logrotate.d'
-logrotate_files_delete_unlisted: True
+docker_gpg_key: /etc/apt/keyrings/docker.asc
 
-logrotate_files:
-  - name: apt
-    path:
-      - '/var/log/apt/term.log'
-      - '/var/log/apt/history.log'
-    options:
-      - 'monthly'
-      - 'rotate 12'
-      - 'compress'
-      - 'missingok'
-      - 'notifempty'
-      - 'create 0644 root syslog'
+new_docker_apps:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-compose-plugin
 
-logrotate_removed: false
-logrotate_backup_dir: /etc/logrotate.old/
+old_docker_apps:
+  - docker
+  - docker-engine
+  - docker.io
+  - containerd
+  - runc
+
+tmp_scripts:
+  ratom:
+    url: "https://raw.githubusercontent.com/aurora/rmate/master/rmate"
+    dest: /usr/local/bin/ratom
+  iterm:
+    url: "https://iterm2.com/shell_integration/install_shell_integration_and_utilities.sh"
+    dest: "/tmp/install_shell_integration_and_utilities.sh"
+
+cache_valid_time_var: 82400
+
+apt_standard_install:
+  - aptitude
+  - avahi-daemon
+  - bash-completion
+  - cifs-utils
+  - nano
+  - htop
+  - openssh-server
+  - openssl
+  - python3
+  - sudo
+  - git
+  - libffi-dev
+  - libssl-dev
+  - zlib1g-dev
+  - libxslt1-dev
+  - libxml2-dev
+  - python3-dev
+  - python3-pip
+  - build-essential
+  - apt-transport-https
+  - usbutils
+  - gcc
+  - make
+  - git-buildpackage
+  - gnupg
+  - gnupg2
+  - flex
+  - bison
+  - tree
+  - xsltproc
+  - docbook-xml
+  - docbook-xsl
+  - apt-utils
+  - unattended-upgrades
+  - lsof
+  - keychain
+  - nfs-common
+  - nfs-kernel-server
+  - nfs4-acl-tools
+
+universal_apt:
+  - aptitude
+  - avahi-daemon
+  - bash-completion
+  - cifs-utils
+  - nano
+  - htop
+  - openssh-server
+  - openssl
+  - python-apt
+  - python3
+  - sudo
+  - git
+  - libffi-dev
+  - libssl-dev
+  - zlib1g-dev
+  - libxslt1-dev
+  - libxml2-dev
+  - python3-dev
+  - python3-pip
+  - build-essential
+  - apt-transport-https
+  - libjpeg8-dev
+  - libjpeg8
+  - usbutils
+  - gcc
+  - make
+  - git-buildpackage
+  - gnupg
+  - gnupg2
+  - flex
+  - bison
+  - tree
+  - xsltproc
+  - docbook-xml
+  - docbook-xsl
+  - apt-utils
+  - unattended-upgrades
+  - lsof
+  - speedtest-cli

@@ -1,0 +1,21 @@
+---
+
+- name: First-steps_linux | download_scripts_install.yml | Checking if iTerm's Shell Scripts are Installed
+  ansible.builtin.stat:
+    path: "{{ ansible_user_dir }}/.iterm2_shell_integration.bash"
+  register: iterm_shell_script
+
+- name: First-steps_linux | download_scripts_install.yml | Create tmp directory
+  ansible.builtin.file:
+    path: "{{ tmp_scripts.iterm.dest }}"
+    state: directory
+    mode: '0775'
+
+- name: First-steps_linux | download_scripts_install.yml | Download and Run iTerm's Shell Integration Stuff
+  ansible.builtin.get_url:
+    url: "{{ tmp_scripts.iterm.url }}"
+    dest: "{{ tmp_scripts.iterm.dest }}"
+    mode: '0775'
+  when: not iterm_shell_script.stat.exists
+  register: iterm_shell_script_download
+  notify: Install iTerm Script
